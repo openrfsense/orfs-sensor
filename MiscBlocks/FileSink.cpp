@@ -22,7 +22,7 @@
 
 #include "FileSink.h"
 
-namespace openrfsense {
+namespace orfs {
 
 FileSink::FileSink(std::string filename) {
     mFileName = filename;
@@ -69,4 +69,4 @@ int FileSink::stop() {
 
     return 1;
 }
-} // namespace openrfsense
+} // namespace orfs

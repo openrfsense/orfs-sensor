@@ -22,7 +22,7 @@
 
 #include "Windowing.h"
 
-namespace openrfsense {
+namespace orfs {
 
 Windowing::Windowing(W_FUNCTION window_func) {
     mQueueOut = new ReaderWriterQueue<SpectrumSegment *>(100);
@@ -81,4 +81,4 @@ int Windowing::stop() {
 
     return 1;
 }
-} // namespace openrfsense
+} // namespace orfs

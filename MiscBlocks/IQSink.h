@@ -37,7 +37,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace openrfsense {
+namespace orfs {
 
 class IQSink :
     public Component,
@@ -74,6 +74,6 @@ class IQSink :
     std::ofstream mOutputFile;
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // OPENRFSENSE_SENSOR_IQSINK_H

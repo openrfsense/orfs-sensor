@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace openrfsense {
+namespace orfs {
 
 class Averaging :
     public Component,
@@ -67,6 +67,6 @@ class Averaging :
     std::vector<SpectrumSegment *> avgVector;
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // ORFS_SENSOR_AVERAGING_H

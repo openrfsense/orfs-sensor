@@ -22,7 +22,7 @@
 
 #include "FFT.h"
 
-namespace openrfsense {
+namespace orfs {
 
 FFT::FFT() { mQueueOut = new ReaderWriterQueue<SpectrumSegment *>(100); }
 
@@ -90,4 +90,4 @@ int FFT::stop() {
 
     return 1;
 }
-} // namespace openrfsense
+} // namespace orfs

@@ -22,7 +22,7 @@
 
 #include "RemoveDC.h"
 
-namespace openrfsense {
+namespace orfs {
 
 RemoveDC::RemoveDC() { mQueueOut = new ReaderWriterQueue<SpectrumSegment *>(100); }
 
@@ -105,4 +105,4 @@ int RemoveDC::stop() {
     return 1;
 }
 
-} // namespace openrfsense
+} // namespace orfs

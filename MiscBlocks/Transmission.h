@@ -38,7 +38,7 @@
 
 #include <netinet/in.h>
 
-namespace openrfsense {
+namespace orfs {
 
 class Transmission :
     public Component,
@@ -86,6 +86,6 @@ class Transmission :
     TCP_Connection *tcp_con;
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // ORFS_SENSOR_TRANSMISSION_H

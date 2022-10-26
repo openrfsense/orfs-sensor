@@ -60,7 +60,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-namespace openrfsense {
+namespace orfs {
 
 class IQStream :
     public Component,
@@ -127,6 +127,6 @@ class IQStream :
     int mChildPID;
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // OPENRFSENSE_SENSOR_IQSINK_H

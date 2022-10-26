@@ -5,7 +5,7 @@
 
 #define OPENRFSENSE_VERSION "@VERSION@"
 
-namespace openrfsense {
+namespace orfs {
 namespace version {
 
 std::string version() { return "@VERSION@-@DEBVERSION@"; }
@@ -13,6 +13,6 @@ std::string version() { return "@VERSION@-@DEBVERSION@"; }
 std::string compilationTime() { return "@TIME_COMPILATION@"; }
 
 } // namespace version
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // VERSION_CONFIG_H

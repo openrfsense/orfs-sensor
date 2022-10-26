@@ -299,19 +299,19 @@ int main(int argc, char *argv[]) {
     signal(SIGTERM, signal_callback_handler);
 
     std::cout << std::endl
-              << "OpenRFSense sensing application " << openrfsense::version::version() << " ("
-              << openrfsense::version::compilationTime() << ")" << std::endl
+              << "OpenRFSense sensing application " << orfs::version::version() << " ("
+              << orfs::version::compilationTime() << ")" << std::endl
               << std::endl;
 
     parse_args(argc, argv);
     OpenRFSenseContext::getInstance()->print();
 
-    openrfsense::RemoveDC *rdcBlock;
-    openrfsense::RemoveDCRTL *rdcRTLBlock;
-    openrfsense::Windowing *winBlock;
-    openrfsense::FFT *fftBlock;
-    openrfsense::Averaging *avgBlock = new openrfsense::Averaging();
-    openrfsense::PSDFast *psdfastBlock;
+    orfs::RemoveDC *rdcBlock;
+    orfs::RemoveDCRTL *rdcRTLBlock;
+    orfs::Windowing *winBlock;
+    orfs::FFT *fftBlock;
+    orfs::Averaging *avgBlock = new orfs::Averaging();
+    orfs::PSDFast *psdfastBlock;
 
     // A few checks before start
     if (OpenRFSenseContext::getInstance()->getPipeline().compare("IQ") == 0) {
@@ -335,26 +335,26 @@ int main(int argc, char *argv[]) {
     }
 
     // RTL-SDR Driver
-    auto *rtlDriver = new openrfsense::rtlsdrDriver();
+    auto *rtlDriver = new orfs::rtlsdrDriver();
     vComponents.push_back(rtlDriver);
 
-    rtlDriver->open("0");
+    rtlDriver->open(OpenRFSenseContext::getInstance()->getDevIndex());
 
-    openrfsense::IQStream *iqStream = new openrfsense::IQStream();
+    orfs::IQStream *iqStream = new orfs::IQStream();
 
     if (OpenRFSenseContext::getInstance()->getPipeline().compare("PSD") == 0) {
         // RemoveDC Block
-        rdcBlock = new openrfsense::RemoveDC();
+        rdcBlock = new orfs::RemoveDC();
         rdcBlock->setQueueIn(rtlDriver->getQueueOut());
         vComponents.push_back(rdcBlock);
 
         // Windowing
-        winBlock = new openrfsense::Windowing(openrfsense::Windowing::HAMMING);
+        winBlock = new orfs::Windowing(orfs::Windowing::HAMMING);
         winBlock->setQueueIn(rdcBlock->getQueueOut());
         vComponents.push_back(winBlock);
 
         // FFT
-        fftBlock = new openrfsense::FFT();
+        fftBlock = new orfs::FFT();
         fftBlock->setQueueIn(winBlock->getQueueOut());
         vComponents.push_back(fftBlock);
 
@@ -363,13 +363,13 @@ int main(int argc, char *argv[]) {
         vComponents.push_back(avgBlock);
     } else if (OpenRFSenseContext::getInstance()->getPipeline().compare("IQ") == 0) {
         // Comment the following to be able to run in RPi0
-        /*rdcRTLBlock = new openrfsense::RemoveDCRTL();
+        /*rdcRTLBlock = new orfs::RemoveDCRTL();
         vComponents.push_back(rdcRTLBlock);
         rdcRTLBlock->setQueueIn(rtlDriver->getQueueOut());
         */
     } else if (OpenRFSenseContext::getInstance()->getPipeline().compare("DEC") == 0) {
         // PSD Fast block
-        psdfastBlock = new openrfsense::PSDFast();
+        psdfastBlock = new orfs::PSDFast();
 
         vComponents.push_back(psdfastBlock);
         psdfastBlock->setQueueIn(rtlDriver->getQueueOut2());
@@ -379,18 +379,18 @@ int main(int argc, char *argv[]) {
         iqStream->setQueueIn(rtlDriver->getQueueOut());
     }
 
-    openrfsense::Transmission *transBlock;
+    orfs::Transmission *transBlock;
 
     // Send measurements to the server.
     if (OpenRFSenseContext::getInstance()->getTlsHosts().compare(DEFAULT_TLS_HOSTS) !=
         0) {
-        auto *avroBlock = new openrfsense::AvroSerialization();
+        auto *avroBlock = new orfs::AvroSerialization();
 
         if (OpenRFSenseContext::getInstance()->getPipeline().compare("PSD") == 0) {
             avroBlock->setQueueIn(avgBlock->getQueueOut());
             vComponents.push_back(avroBlock);
         } else if (OpenRFSenseContext::getInstance()->getPipeline().compare("IQ") == 0) {
-            rdcRTLBlock = new openrfsense::RemoveDCRTL();
+            rdcRTLBlock = new orfs::RemoveDCRTL();
             rdcRTLBlock->setQueueIn(rtlDriver->getQueueOut());
             vComponents.push_back(rdcRTLBlock);
 
@@ -398,7 +398,7 @@ int main(int argc, char *argv[]) {
             vComponents.push_back(avroBlock);
         }
 
-        transBlock = new openrfsense::Transmission();
+        transBlock = new orfs::Transmission();
         vComponents.push_back(transBlock);
         transBlock->setQueueIn(avroBlock->getQueueOut());
     }
@@ -410,7 +410,7 @@ int main(int argc, char *argv[]) {
 
         if (OpenRFSenseContext::getInstance()->getPipeline().compare("PSD") == 0) {
 
-            auto *fileSink = new openrfsense::FileSink(
+            auto *fileSink = new orfs::FileSink(
                 OpenRFSenseContext::getInstance()->getOutputFileName());
             vComponents.push_back(fileSink);
 
@@ -419,17 +419,17 @@ int main(int argc, char *argv[]) {
         } else if (OpenRFSenseContext::getInstance()->getPipeline().compare("IQ") == 0) {
 
             if (OpenRFSenseContext::getInstance()->getOutputType() == OUTPUT_TYPE_BYTE) {
-                auto *iqSink = new openrfsense::IQSink(
+                auto *iqSink = new orfs::IQSink(
                     OpenRFSenseContext::getInstance()->getOutputFileName());
                 iqSink->setQueueIn(rtlDriver->getQueueOut());
                 vComponents.push_back(iqSink);
             } else { // FLOAT
 
-                rdcRTLBlock = new openrfsense::RemoveDCRTL();
+                rdcRTLBlock = new orfs::RemoveDCRTL();
                 rdcRTLBlock->setQueueIn(rtlDriver->getQueueOut());
                 vComponents.push_back(rdcRTLBlock);
 
-                auto *iqSink = new openrfsense::IQSink(
+                auto *iqSink = new orfs::IQSink(
                     OpenRFSenseContext::getInstance()->getOutputFileName());
                 iqSink->setQueueIn(rdcRTLBlock->getQueueOut());
                 vComponents.push_back(iqSink);

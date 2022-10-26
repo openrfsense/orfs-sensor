@@ -34,7 +34,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace openrfsense {
+namespace orfs {
 
 class FFT : public Component, public Communication<SpectrumSegment *, SpectrumSegment *> {
 
@@ -66,6 +66,6 @@ class FFT : public Component, public Communication<SpectrumSegment *, SpectrumSe
     std::vector<SpectrumSegment *> mFFTBatch;
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // ORFS_SENSOR_FFT_H

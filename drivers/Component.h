@@ -29,14 +29,13 @@
 #include <thread>
 
 class Component {
-
   public:
     // Name identifier for the component
     virtual std::string getNameId() = 0;
 
     // Generic function to start the component in a separated thread.
     void start() {
-        mThread = std::thread([this] { run(); });
+      mThread = std::thread([this] { run(); });
     };
 
     bool isRunning() { return mRunning; };

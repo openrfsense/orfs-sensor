@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace openrfsense {
+namespace orfs {
 
 class RemoveDCRTL :
     public Component,
@@ -68,6 +68,6 @@ class RemoveDCRTL :
     const int MAX_SEGMENT = 2400000;
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // ORFS_SENSOR_REMOVEDCRTL_H

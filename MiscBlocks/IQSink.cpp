@@ -22,7 +22,7 @@
 
 #include "IQSink.h"
 
-namespace openrfsense {
+namespace orfs {
 
 IQSink::IQSink(std::string filename) {
 
@@ -106,4 +106,4 @@ int IQSink::stop() {
     waitForThread();
     return 1;
 }
-} // namespace openrfsense
+} // namespace orfs

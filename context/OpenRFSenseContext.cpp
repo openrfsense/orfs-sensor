@@ -161,7 +161,6 @@ OpenRFSenseContext::split(const std::string &s, T delimiter) {
 }
 
 void OpenRFSenseContext::setOutputFileName(const std::string &fileName) {
-
     if (fileName.empty())
         return;
 

@@ -41,7 +41,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace openrfsense {
+namespace orfs {
 
 class PSDFast :
     public Component,
@@ -76,6 +76,6 @@ class PSDFast :
     int slen = sizeof(si_other);
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // ORFS_SENSOR_AVERAGING_H

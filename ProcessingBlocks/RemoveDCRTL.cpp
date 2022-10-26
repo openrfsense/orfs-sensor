@@ -22,7 +22,7 @@
 
 #include "RemoveDCRTL.h"
 
-namespace openrfsense {
+namespace orfs {
 
 RemoveDCRTL::RemoveDCRTL() { mQueueOut = new ReaderWriterQueue<SpectrumSegment *>(100); }
 
@@ -77,4 +77,4 @@ int RemoveDCRTL::stop() {
     return 1;
 }
 
-} // namespace openrfsense
+} // namespace orfs

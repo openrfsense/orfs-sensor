@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace openrfsense {
+namespace orfs {
 
 class Windowing :
     public Component,
@@ -68,6 +68,6 @@ class Windowing :
 
     std::vector<float> w_func;
 };
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // ORFS_SENSOR_WINDOWING_H

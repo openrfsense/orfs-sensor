@@ -22,7 +22,7 @@
 
 #include "SpectrumSegment.h"
 
-namespace openrfsense {
+namespace orfs {
 
 SpectrumSegment::SpectrumSegment(
     long sensorId, struct timespec timeStamp, unsigned long long centerFrequency,
@@ -75,4 +75,4 @@ SpectrumSegment::~SpectrumSegment() {
         free(mAvroBuffer);
 }
 
-} // namespace openrfsense
+} // namespace orfs

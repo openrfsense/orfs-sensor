@@ -23,24 +23,6 @@
 #ifndef ORFS_SENSOR_RTLSDR_H
 #define ORFS_SENSOR_RTLSDR_H
 
-#include <iostream>
-#include <rtl-sdr.h>
-#include <string>
-#include <thread>
-#include <zconf.h>
-
-#include <endian.h>
-#include <errno.h>
-#include <error.h>
-#include <netinet/in.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <unistd.h>
-
 #include "../../context/OpenRFSenseContext.h"
 #include "../Communication.h"
 #include "../Component.h"
@@ -48,70 +30,89 @@
 #include "../common/SequentialHopping.h"
 #include "rtlsdrDriver.h"
 
+#include <endian.h>
+#include <errno.h>
+#include <error.h>
+#include <iostream>
+#include <netinet/in.h>
+#include <rtl-sdr.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <string>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <thread>
+#include <unistd.h>
+#include <zconf.h>
+
 // Workaround issue #4 , complex.h breaks openssl's RSA library
 //   include RSA before any mention to complex.h
 #include "../../types/SpectrumSegment.h"
+
 #include <complex.h>
 
 extern "C" {
 #include "converter/converter.h"
 };
 
-namespace openrfsense {
+namespace orfs {
 
-class rtlsdrDriver : public Driver,
-                     public Component,
-                     public Communication<int, SpectrumSegment *> {
+class rtlsdrDriver :
+    public Driver,
+    public Component,
+    public Communication<int, SpectrumSegment *> {
 
-public:
-  rtlsdrDriver();
+  public:
+    rtlsdrDriver();
 
-  ~rtlsdrDriver();
+    ~rtlsdrDriver();
 
-  // Open the device
-  int open(std::string deviceId);
+    // Open the device
+    int open(int device_index);
 
-  // Close the device
-  int close();
+    // Close the device
+    int close();
 
-  // Stop
-  int stop();
+    // Stop
+    int stop();
 
-  void SyncSampling();
+    void SyncSampling();
 
-  void AsyncSampling();
+    void AsyncSampling();
 
-  ReaderWriterQueue<int> *getQueueIn() { return NULL; }
-  void setQueueIn(ReaderWriterQueue<int> *QueueIn){};
+    ReaderWriterQueue<int> *getQueueIn() { return NULL; }
+    void setQueueIn(ReaderWriterQueue<int> *QueueIn){};
 
-  ReaderWriterQueue<SpectrumSegment *> *getQueueOut() { return mQueueOut; };
-  ReaderWriterQueue<SpectrumSegment *> *getQueueOut2() { return mQueueOut2; };
-  void setQueueOut(ReaderWriterQueue<SpectrumSegment *> *QueueOut){};
+    ReaderWriterQueue<SpectrumSegment *> *getQueueOut() { return mQueueOut; };
+    ReaderWriterQueue<SpectrumSegment *> *getQueueOut2() { return mQueueOut2; };
+    void setQueueOut(ReaderWriterQueue<SpectrumSegment *> *QueueOut){};
 
-  std::string getNameId() { return std::string("rtlsdrDriver"); };
+    std::string getNameId() { return std::string("rtlsdrDriver"); };
 
-private:
-  const std::string CONVERTER_PATH = "/dev/esenseconv";
+  private:
+    const std::string CONVERTER_PATH = "/dev/esenseconv";
 
-  // Run the driver in the thread
-  void run();
+    // Run the driver in the thread
+    void run();
 
-  int mDeviceId;
-  rtlsdr_dev_t *mDevice;
+    int mDeviceId;
+    rtlsdr_dev_t *mDevice;
 
-  SequentialHopping *mSeqHopping;
+    SequentialHopping *mSeqHopping;
 
-  ReaderWriterQueue<SpectrumSegment *> *mQueueOut;
-  ReaderWriterQueue<SpectrumSegment *> *mQueueOut2;
+    ReaderWriterQueue<SpectrumSegment *> *mQueueOut;
+    ReaderWriterQueue<SpectrumSegment *> *mQueueOut2;
 
-  converter mConverterDriver;
-  bool mConverterEnabled;
+    converter mConverterDriver;
+    bool mConverterEnabled;
 
-  // static void* socket_thread( void *arg);
+    // static void* socket_thread( void *arg);
 
-  std::vector<std::complex<float>> m_capbuf_raw;
+    std::vector<std::complex<float>> m_capbuf_raw;
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // ORFS_SENSOR_RTLSDR_H

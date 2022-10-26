@@ -40,7 +40,7 @@ extern "C" {
 #include <sys/ioctl.h>
 };
 
-namespace openrfsense {
+namespace orfs {
 
 class AvroSerialization :
     public Component,
@@ -77,6 +77,6 @@ class AvroSerialization :
     ReaderWriterQueue<SpectrumSegment *> *mQueueIn;
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // ORFS_SENSOR_AVROSERIALIZATION_H

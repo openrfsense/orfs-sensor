@@ -26,7 +26,7 @@
 #define SOCKET_NAME  "/tmp/socket"
 #define SOCKET_AUDIO "/tmp/socket_audio"
 
-namespace openrfsense {
+namespace orfs {
 
 IQStream::IQStream() {
     mSocketEnable = false;
@@ -325,4 +325,4 @@ int IQStream::stop() {
 
     return 1;
 }
-} // namespace openrfsense
+} // namespace orfs

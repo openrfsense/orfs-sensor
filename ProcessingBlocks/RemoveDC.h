@@ -33,7 +33,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace openrfsense {
+namespace orfs {
 
 class RemoveDC :
     public Component,
@@ -63,6 +63,6 @@ class RemoveDC :
     ReaderWriterQueue<SpectrumSegment *> *mQueueIn;
 };
 
-} // namespace openrfsense
+} // namespace orfs
 
 #endif // ORFS_SENSOR_REMOVEDC_H

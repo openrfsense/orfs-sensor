@@ -28,7 +28,7 @@
 #include <time.h>
 #include <vector>
 
-namespace openrfsense {
+namespace orfs {
 
 class SpectrumSegment {
   public:
@@ -106,5 +106,5 @@ class SpectrumSegment {
     unsigned char *mSamples;
     uint32_t mSamples_len;
 };
-} // namespace openrfsense
+} // namespace orfs
 #endif /* SRC_SENSOR_SPECTRUMSEGMENT_H_ */

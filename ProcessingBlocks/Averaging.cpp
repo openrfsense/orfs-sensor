@@ -24,7 +24,7 @@
 
 #include <sys/param.h>
 
-namespace openrfsense {
+namespace orfs {
 
 Averaging::Averaging() { mQueueOut = new ReaderWriterQueue<SpectrumSegment *>(100); }
 
@@ -108,4 +108,4 @@ int Averaging::stop() {
 
     return 1;
 }
-} // namespace openrfsense
+} // namespace orfs

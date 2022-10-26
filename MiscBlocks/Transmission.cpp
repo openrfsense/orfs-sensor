@@ -29,7 +29,7 @@
 #include <functional>
 #include <netinet/in.h>
 
-namespace openrfsense {
+namespace orfs {
 
 Transmission *transmission;
 
@@ -235,4 +235,4 @@ void Transmission::parse_tls_hosts() {
     } else
         throw std::logic_error("Transmission - No information about server\n");
 }
-} // namespace openrfsense
+} // namespace orfs

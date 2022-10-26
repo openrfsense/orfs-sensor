@@ -28,19 +28,16 @@
 #include "../types/SpectrumSegment.h"
 
 class Driver {
-
   public:
     Driver(){};
 
     ~Driver(){};
 
     // Open the device
-    virtual int open(std::string device) = 0;
+    virtual int open(int device_index) = 0;
 
     // Close the device
     virtual int close() = 0;
-
-  private:
 };
 
 #endif // ORFS_SENSOR_DRIVER_H

@@ -22,7 +22,7 @@
 
 #include "AvroSerialization.h"
 
-namespace openrfsense {
+namespace orfs {
 
 AvroSerialization::AvroSerialization() {
     mQueueOut = new ReaderWriterQueue<SpectrumSegment *>(100);
@@ -385,4 +385,4 @@ int AvroSerialization::stop() {
 
     return 1;
 }
-} // namespace openrfsense
+} // namespace orfs

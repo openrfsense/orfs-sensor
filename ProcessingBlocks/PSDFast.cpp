@@ -30,7 +30,7 @@
 #define SERVER "127.0.0.1"
 #define PORT   5555
 
-namespace openrfsense {
+namespace orfs {
 
 PSDFast::PSDFast() {
 
@@ -240,4 +240,4 @@ int PSDFast::stop() {
 
     return 1;
 }
-} // namespace openrfsense
+} // namespace orfs
