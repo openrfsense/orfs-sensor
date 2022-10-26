@@ -48,9 +48,9 @@
 
 void usage(char *name) {
     fprintf(
-        stderr,
+        stdout,
         "Usage:\n"
-        "  %s min_freq max_freq\n"
+        "  %s sensor_id min_freq max_freq\n"
         "  [-h]\n"
         "  [-d <dev_index>]\n"
         "  [-c <clk_off>] [-k <clk_corr_period>]\n"
@@ -68,7 +68,7 @@ void usage(char *name) {
         "<hostname1>:<portnumber1>[;<bandwidth1>],...,<hostnameN>:<portnumberN>"
         "[;"
         "<bandwidthN>]#<ca_cert>#<cert>#<key>]\n"
-        "  [-z <pipeline> ]\n"
+        "  [-z <pipeline>]\n"
         "\n"
         "  PSD Pipeline\n"
         "    [-f <log2_fft_size>] [-b <fft_batchlen>]\n"
@@ -177,7 +177,7 @@ void usage(char *name) {
         OpenRFSenseContext::getInstance()->getAvgFactor(),
         OpenRFSenseContext::getInstance()->getSoverlap());
 
-    exit(-1);
+    exit(0);
 }
 
 void parse_args(int argc, char *argv[]) {
@@ -278,7 +278,6 @@ void parse_args(int argc, char *argv[]) {
 std::vector<Component *> vComponents;
 
 void finish_ok() {
-
     std::cout << std::endl << "Shutdown components ..." << std::endl;
     for (unsigned int i = 0; i < vComponents.size(); i++) {
         std::cout << "  - Stopping component: " << vComponents.at(i)->getNameId()
