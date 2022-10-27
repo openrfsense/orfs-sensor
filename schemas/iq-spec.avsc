@@ -180,7 +180,7 @@
           },
           {
             "doc": "Required Field - Microseconds extension for the UNIX time stamp.",
-            "name": "microSeconds",
+            "name": "microseconds",
             "type": "int"
           }
         ]
