@@ -81,8 +81,7 @@ void AvroSerialization::IQ() {
             writeMetadata(avro_value_sample, segment);
 
             avro_value_t avro_value_data;
-            avro_value_get_by_name(
-                &avro_value_sample, "data", &avro_value_data, NULL);
+            avro_value_get_by_name(&avro_value_sample, "data", &avro_value_data, NULL);
 
             avro_value_t avro_value_element;
 
@@ -99,12 +98,10 @@ void AvroSerialization::IQ() {
 
                 // std::complex<float> sample = (segment->getIQSamples()[i]);
 
-                avro_value_append(
-                    &avro_value_data, &avro_value_element, &new_index);
+                avro_value_append(&avro_value_data, &avro_value_element, &new_index);
                 check_i(avro_value_set_float(&avro_value_element, real));
 
-                avro_value_append(
-                    &avro_value_data, &avro_value_element, &new_index);
+                avro_value_append(&avro_value_data, &avro_value_element, &new_index);
                 check_i(avro_value_set_float(&avro_value_element, imag));
             }
 
@@ -167,15 +164,15 @@ void AvroSerialization::PSD() {
             writeMetadata(avro_value_sample, segment);
 
             avro_value_t avro_value_config, avro_value_center_freq;
-            avro_value_get_by_name(&avro_value_sample, "config", &avro_value_config, NULL);
+            avro_value_get_by_name(
+                &avro_value_sample, "config", &avro_value_config, NULL);
             avro_value_get_by_name(
                 &avro_value_config, "centerFreq", &avro_value_center_freq, NULL);
             avro_value_set_long(
                 &avro_value_center_freq, (uint64_t)segment->getCenterFrequency());
 
             avro_value_t avro_value_data;
-            avro_value_get_by_name(
-                &avro_value_sample, "data", &avro_value_data, NULL);
+            avro_value_get_by_name(&avro_value_sample, "data", &avro_value_data, NULL);
 
             // We need an odd number of bins
             if (reduced_fft_size % 2 == 0)
@@ -188,8 +185,7 @@ void AvroSerialization::PSD() {
                 size_t new_index;
                 float s = (segment->getPSDValues()[l + i]);
 
-                avro_value_append(
-                    &avro_value_data, &avro_value_element, &new_index);
+                avro_value_append(&avro_value_data, &avro_value_element, &new_index);
                 if (new_index != i) {
                     fprintf(stderr, "[AvroSerialization] ERROR: Unexpected index.\n");
                     exit(1);
@@ -221,8 +217,7 @@ void AvroSerialization::parseSchema(const char *filename, avro_schema_t &avro_sc
     // Read JSON schema from file
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
-        fprintf(
-            stderr, "[AvroSerialization] Failed to open file %s.\n", filename);
+        fprintf(stderr, "[AvroSerialization] Failed to open file %s.\n", filename);
         exit(1);
     }
     fseek(file, 0, SEEK_END);
@@ -232,8 +227,7 @@ void AvroSerialization::parseSchema(const char *filename, avro_schema_t &avro_sc
     json_schema = (char *)malloc(file_size + 1);
     size_t read = fread(json_schema, 1, file_size, file);
     if (read != file_size) {
-        fprintf(
-            stderr, "[AvroSerialization] File %s incompletely read.\n", filename);
+        fprintf(stderr, "[AvroSerialization] File %s incompletely read.\n", filename);
         exit(1);
     }
     json_schema[file_size] = '\0';
@@ -251,8 +245,8 @@ void AvroSerialization::parseSchema(const char *filename, avro_schema_t &avro_sc
 
 void AvroSerialization::writeMetadata(avro_value_t &base, SpectrumSegment *segment) {
     // Sensing ID and timestamps (required)
-    avro_value_t avro_value_lossrate, avro_value_sen_id, avro_value_time,
-        avro_value_timesecs, avro_value_timemicrosecs;
+    avro_value_t avro_value_lossrate, avro_value_sen_id, avro_value_sample_type,
+        avro_value_time, avro_value_timesecs, avro_value_timemicrosecs;
 
     // Write sensor ID, fallback to eth0 mac address string
     char *mac_eth0_dec = 0;
@@ -262,6 +256,11 @@ void AvroSerialization::writeMetadata(avro_value_t &base, SpectrumSegment *segme
     if (!OpenRFSenseContext::getInstance()->getSensorId().empty())
         avro_value_set_string(
             &avro_value_sen_id, OpenRFSenseContext::getInstance()->getSensorId().c_str());
+
+    avro_value_get_by_name(&base, "sampleType", &avro_value_sample_type, NULL);
+    avro_value_set_string(
+        &avro_value_sample_type,
+        OpenRFSenseContext::getInstance()->getPipeline().c_str());
 
     check_i(avro_value_get_by_name(&avro_value_time, "time", &avro_value_time, NULL));
     avro_value_get_by_name(&avro_value_time, "seconds", &avro_value_timesecs, NULL);

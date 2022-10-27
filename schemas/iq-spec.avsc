@@ -10,6 +10,12 @@
       "type": "string"
     },
     {
+      "name": "sampleType",
+      "doc": "Sample type string.",
+      "type": "string",
+      "default": "IQ"
+    },
+    {
       "name": "config",
       "doc": "Sensor configuration for the recorded data set.",
       "type": {

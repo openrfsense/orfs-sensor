@@ -41,7 +41,6 @@ void Transmission::signal_callback_handler(int signum) {
 }
 
 Transmission::Transmission() {
-
     transmission = this;
     mStrHosts = OpenRFSenseContext::getInstance()->getTlsHosts();
     parse_tls_hosts();
@@ -53,9 +52,9 @@ Transmission::Transmission() {
 }
 
 void Transmission::checkConnection() {
+    if (tls_con != NULL) return;
 
-    if (tls_con == NULL && mConnection == ConnectionType::TLS) {
-
+    if (mConnection == ConnectionType::TLS) {
         tls_con = (TLS_Connection *)malloc(sizeof(TLS_Connection *));
 
         tls_init_p(
@@ -65,9 +64,7 @@ void Transmission::checkConnection() {
         while (tls_connect(tls_con) < 0) {
             sleep(1);
         }
-
-    } else if (tcp_con == NULL && mConnection == ConnectionType::TCP) {
-
+    } else if (mConnection == ConnectionType::TCP) {
         tcp_con = (TCP_Connection *)malloc(sizeof(TCP_Connection *));
         tcp_init_p(&tcp_con, mHost.c_str(), atoi(mPort.c_str()));
 
@@ -78,7 +75,6 @@ void Transmission::checkConnection() {
 }
 
 void Transmission::run() {
-
     std::cout << "[*] Transmission block running .... " << std::endl;
 
     unsigned int prev_data_size = 0, payload_size, packet_size = 0;
@@ -100,9 +96,7 @@ void Transmission::run() {
         reduced_fft_size++;
 
     while (mRunning || mQueueIn->size_approx() != 0) {
-
         if (mQueueIn && mQueueIn->try_dequeue(segment)) {
-
             // We need to check the connection here since the clock_nanosleep()
             // function in the rtlsdrDriver interferes with the socket.
             checkConnection();
@@ -132,13 +126,11 @@ void Transmission::run() {
             memset(buf, 0, packet_size);
 
             if (OpenRFSenseContext::getInstance()->getPipeline().compare("PSD") == 0) {
-
                 buf[0] = htonl(data_size);
                 buf[1] = htonl(reduced_fft_size);
                 memcpy(buf + 2, buffer, data_size);
-
-            } else { // IQ
-
+            } else { 
+                // IQ
                 buf[0] = htonl(data_size);
                 memcpy(buf + 1, buffer, data_size);
             }
@@ -166,7 +158,6 @@ void Transmission::run() {
     }
 
     if (mConnection == ConnectionType::TLS) {
-
         if (tls_con != NULL) {
             tls_disconnect(tls_con);
             tls_release(tls_con);
@@ -180,7 +171,6 @@ void Transmission::run() {
 }
 
 int Transmission::stop() {
-
     mRunning = false;
     waitForThread();
 
@@ -188,9 +178,7 @@ int Transmission::stop() {
 }
 
 void Transmission::parse_tls_hosts() {
-
     if (mStrHosts.c_str() != NULL && strcmp(mStrHosts.c_str(), "0") != 0) {
-
         std::string delim = "#";
         std::string delim_2 = ":";
 
@@ -199,7 +187,6 @@ void Transmission::parse_tls_hosts() {
         auto iter = 0;
         while (end != std::string::npos) {
             if (iter == 0) {
-
                 std::string host = mStrHosts.substr(start, end - start);
                 auto end2 = host.find(delim_2);
 

@@ -277,7 +277,7 @@ void parse_args(int argc, char *argv[]) {
 
 std::vector<Component *> vComponents;
 
-void finish_ok() {
+void shutdown() {
     std::cout << std::endl << "Shutdown components ..." << std::endl;
     for (unsigned int i = 0; i < vComponents.size(); i++) {
         std::cout << "  - Stopping component: " << vComponents.at(i)->getNameId()
@@ -290,7 +290,7 @@ void finish_ok() {
 
 void signal_callback_handler(int signum) {
     std::cout << "signal_callback_handler " << signum << std::endl;
-    finish_ok();
+    shutdown();
     exit(signum);
 }
 
@@ -401,30 +401,24 @@ int main(int argc, char *argv[]) {
         transBlock = new orfs::Transmission();
         vComponents.push_back(transBlock);
         transBlock->setQueueIn(avroBlock->getQueueOut());
-    }
-
-    // Send measurements to a  file.
-    else if (
+    } else if (
         OpenRFSenseContext::getInstance()->getOutputFileName().compare(
             DEFAULT_OUTPUT_FILENAME) != 0) {
-
+        // Send measurements to a  file.
         if (OpenRFSenseContext::getInstance()->getPipeline().compare("PSD") == 0) {
-
             auto *fileSink = new orfs::FileSink(
                 OpenRFSenseContext::getInstance()->getOutputFileName());
             vComponents.push_back(fileSink);
 
             fileSink->setQueueIn(avgBlock->getQueueOut());
-
         } else if (OpenRFSenseContext::getInstance()->getPipeline().compare("IQ") == 0) {
-
             if (OpenRFSenseContext::getInstance()->getOutputType() == OUTPUT_TYPE_BYTE) {
                 auto *iqSink = new orfs::IQSink(
                     OpenRFSenseContext::getInstance()->getOutputFileName());
                 iqSink->setQueueIn(rtlDriver->getQueueOut());
                 vComponents.push_back(iqSink);
-            } else { // FLOAT
-
+            } else {
+                // FLOAT
                 rdcRTLBlock = new orfs::RemoveDCRTL();
                 rdcRTLBlock->setQueueIn(rtlDriver->getQueueOut());
                 vComponents.push_back(rdcRTLBlock);
@@ -463,7 +457,6 @@ int main(int argc, char *argv[]) {
                 break;
 
             if (OpenRFSenseContext::getInstance()->getPipeline().compare("DEC") == 0) {
-
                 // Restart IQStream and decoder if 1) decoder changes or 2)
                 // decoder (child) dies
                 if (OpenRFSenseContext::getInstance()->getDecoder() != current_dec ||
@@ -485,7 +478,7 @@ int main(int argc, char *argv[]) {
         std::cerr << "Connection Server Lost" << std::endl;
     }
 
-    finish_ok();
+    shutdown();
 
     return 0;
 }

@@ -10,6 +10,12 @@
       "type": "string"
     },
     {
+      "name": "sampleType",
+      "doc": "Sample type string.",
+      "type": "string",
+      "default": "PSD"
+    },
+    {
       "name": "config",
       "doc": "Sensor configuration for the recorded data set.",
       "type": {
