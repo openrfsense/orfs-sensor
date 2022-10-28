@@ -37,6 +37,8 @@ OpenRFSenseContext::~OpenRFSenseContext() {}
 
 void OpenRFSenseContext::print() {
     std::cout << "---- Config ---- " << std::endl;
+    std::cout << "Sensor ID: " << getSensorId() << std::endl;
+    std::cout << "Campaign ID: " << getCampaignId() << std::endl;
     std::cout << "Min Freq: " << getMinFreq() << std::endl;
     std::cout << "Max Freq: " << getMaxFreq() << std::endl;
     std::cout << "Pipeline: " << getPipeline() << std::endl;
@@ -81,6 +83,12 @@ std::string OpenRFSenseContext::getSensorId() const { return mSensorId; }
 
 void OpenRFSenseContext::setSensorId(const std::string &id) {
     mSensorId = id;
+}
+
+std::string OpenRFSenseContext::getCampaignId() const { return mCampaignId; }
+
+void OpenRFSenseContext::setCampaignId(const std::string &id) {
+    mCampaignId = id;
 }
 
 std::string OpenRFSenseContext::getPipeline() const { return mPipeline; }

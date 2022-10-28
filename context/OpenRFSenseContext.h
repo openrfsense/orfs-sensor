@@ -81,6 +81,9 @@ class OpenRFSenseContext {
     std::string getSensorId() const;
     void setSensorId(const std::string &id);
 
+    std::string getCampaignId() const;
+    void setCampaignId(const std::string &id);
+
     std::string getPipeline() const;
     void setPipeline(const std::string &pipeline);
     unsigned int getAvgFactor() const;
@@ -190,6 +193,7 @@ class OpenRFSenseContext {
     //	Thread       *thread;
 
     std::string mSensorId;
+    std::string mCampaignId;
     uint64_t mMinFreq;
     uint64_t mMaxFreq;
 

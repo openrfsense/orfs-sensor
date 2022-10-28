@@ -10,6 +10,11 @@
       "type": "string"
     },
     {
+      "name": "campaignId",
+      "doc": "Unique identifier for the campaign this sample belongs to.",
+      "type": "string"
+    },
+    {
       "name": "sampleType",
       "doc": "Sample type string.",
       "type": "string",

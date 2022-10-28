@@ -245,8 +245,9 @@ void AvroSerialization::parseSchema(const char *filename, avro_schema_t &avro_sc
 
 void AvroSerialization::writeMetadata(avro_value_t &base, SpectrumSegment *segment) {
     // Sensing ID and timestamps (required)
-    avro_value_t avro_value_lossrate, avro_value_sen_id, avro_value_sample_type,
-        avro_value_time, avro_value_timesecs, avro_value_timemicrosecs;
+    avro_value_t avro_value_lossrate, avro_value_sen_id, avro_value_campaign_id,
+        avro_value_sample_type, avro_value_time, avro_value_timesecs,
+        avro_value_timemicrosecs;
 
     // Write sensor ID, fallback to eth0 mac address string
     char *mac_eth0_dec = 0;
@@ -256,6 +257,13 @@ void AvroSerialization::writeMetadata(avro_value_t &base, SpectrumSegment *segme
     if (!OpenRFSenseContext::getInstance()->getSensorId().empty())
         avro_value_set_string(
             &avro_value_sen_id, OpenRFSenseContext::getInstance()->getSensorId().c_str());
+
+    avro_value_get_by_name(&base, "campaignId", &avro_value_campaign_id, NULL);
+    avro_value_set_string(&avro_value_campaign_id, "");
+    if (!OpenRFSenseContext::getInstance()->getSensorId().empty())
+        avro_value_set_string(
+            &avro_value_campaign_id,
+            OpenRFSenseContext::getInstance()->getCampaignId().c_str());
 
     avro_value_get_by_name(&base, "sampleType", &avro_value_sample_type, NULL);
     avro_value_set_string(

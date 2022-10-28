@@ -50,7 +50,7 @@ void usage(char *name) {
     fprintf(
         stdout,
         "Usage:\n"
-        "  %s sensor_id min_freq max_freq\n"
+        "  %s sensor_id campaign_id min_freq max_freq\n"
         "  [-h]\n"
         "  [-d <dev_index>]\n"
         "  [-c <clk_off>] [-k <clk_corr_period>]\n"
@@ -266,12 +266,13 @@ void parse_args(int argc, char *argv[]) {
     }
 
     // Non-option arguments
-    if (optind + 3 != argc) {
+    if (optind + 4 != argc) {
         usage(argv[0]);
     } else {
         OpenRFSenseContext::getInstance()->setSensorId(argv[optind]);
-        OpenRFSenseContext::getInstance()->setMinFreq(atoll(argv[optind + 1]));
-        OpenRFSenseContext::getInstance()->setMaxFreq(atoll(argv[optind + 2]));
+        OpenRFSenseContext::getInstance()->setCampaignId(argv[optind + 1]);
+        OpenRFSenseContext::getInstance()->setMinFreq(atoll(argv[optind + 2]));
+        OpenRFSenseContext::getInstance()->setMaxFreq(atoll(argv[optind + 3]));
     }
 }
 
