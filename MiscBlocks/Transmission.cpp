@@ -101,7 +101,7 @@ void Transmission::run() {
             // function in the rtlsdrDriver interferes with the socket.
             checkConnection();
 
-            char *buffer = segment->getAvroBuffer();
+            char *avroBuffer = segment->getAvroBuffer();
             unsigned int data_size = segment->getAvroBufferSize();
 
             // std::cout << "[*] " <<
@@ -113,33 +113,18 @@ void Transmission::run() {
                 // The payload consists of the compressed data plus some
                 // padding, guaranteeing the packet size to be a multiple of 4
                 payload_size = (data_size + 3) & ~0x03;
-                if (OpenRFSenseContext::getInstance()->getPipeline().compare("PSD") == 0)
-                    packet_size = 2 * sizeof(uint32_t) + payload_size;
-                else {
-                    packet_size = 1 * sizeof(uint32_t) + payload_size;
-                }
-
-                buf = (uint32_t *)realloc(buf, packet_size);
+                buf = (uint32_t *)realloc(buf, payload_size);
                 prev_data_size = data_size;
             }
 
-            memset(buf, 0, packet_size);
-
-            if (OpenRFSenseContext::getInstance()->getPipeline().compare("PSD") == 0) {
-                buf[0] = htonl(data_size);
-                buf[1] = htonl(reduced_fft_size);
-                memcpy(buf + 2, buffer, data_size);
-            } else { 
-                // IQ
-                buf[0] = htonl(data_size);
-                memcpy(buf + 1, buffer, data_size);
-            }
+            memset(buf, 0, payload_size);
+            memcpy(buf, avroBuffer, data_size);
 
             int r;
             if (mConnection == ConnectionType::TLS)
-                r = tls_write(tls_con, buf, packet_size);
+                r = tls_write(tls_con, buf, payload_size);
             else
-                r = tcp_write(tcp_con, buf, packet_size);
+                r = tcp_write(tcp_con, buf, payload_size);
 
             if (r != 0) {
                 std::cerr << "[ERROR] Transmission thread could not write "
