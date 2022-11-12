@@ -289,8 +289,9 @@ void AvroSerialization::writeMetadata(avro_value_t *base, SpectrumSegment *segme
 
     check_i(avro_value_get_by_name(
         &avro_value_config, "hoppingStrategy", &avro_value_hopping_strategy, NULL));
-    check_i(avro_value_set_branch(&avro_value_hopping_strategy, 0, &avro_value_branch));
-    check_i(avro_value_set_null(&avro_value_branch));
+    check_i(avro_value_set_branch(&avro_value_hopping_strategy, 1, &avro_value_branch));
+    check_i(avro_value_set_int(
+        &avro_value_branch, OpenRFSenseContext::getInstance()->getHoppingStrategyId()));
 
     check_i(avro_value_get_by_name(
         &avro_value_config, "antennaGain", &avro_value_antenna_gain, NULL));
