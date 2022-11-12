@@ -77,7 +77,7 @@
             "doc": "(optional) Identifier for the antenna being used if device has multiple antennas",
             "type": [
               "null",
-              "int
+              "int"
             ]
           },
           {
