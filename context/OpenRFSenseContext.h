@@ -30,6 +30,7 @@
 
 // Default values
 const std::string DEFAULT_PIPELINE = "PSD";
+const std::string DEFAULT_SCHEMA_PATH = "/usr/openrfsense/sample.avsc";
 const int DEFAULT_LOG2_FFT_SIZE = 8;
 const int DEFAULT_MONITOR_TIME = 0;
 const int DEFAULT_MIN_TIME_RES = 0;
@@ -86,6 +87,8 @@ class OpenRFSenseContext {
 
     std::string getPipeline() const;
     void setPipeline(const std::string &pipeline);
+    const std::string &getSchemaPath() const;
+    void setSchemaPath(const std::string &schemaPath);
     unsigned int getAvgFactor() const;
     void setAvgFactor(unsigned int avgFactor);
     unsigned int getClkCorrPerior() const;
@@ -155,6 +158,7 @@ class OpenRFSenseContext {
   private:
     OpenRFSenseContext() {
         setPipeline(DEFAULT_PIPELINE);
+        setSchemaPath(DEFAULT_SCHEMA_PATH);
         setLog2FftSize(DEFAULT_LOG2_FFT_SIZE);
         setMonitorTime(DEFAULT_MONITOR_TIME);
         setMinTimeRes(DEFAULT_MIN_TIME_RES);
@@ -220,6 +224,7 @@ class OpenRFSenseContext {
     int mDirectSamplingMode;
     unsigned int mBufferTime;
     std::string mPipeline;
+    std::string mSchemaPath;
     unsigned long mstartTimeSampling;
 
     unsigned int mHoppingStrategyId;

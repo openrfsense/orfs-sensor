@@ -117,12 +117,7 @@ void usage(char *name) {
         "  -l <cmpr_level>        Compression level [default=%u]\n"
         "                           0 for no compression, fastest\n"
         "                           9 for highest compression, slowest\n"
-        "  -m "
-        "<hostname1>:<portnumber1>[;<bandwidth1>],...,<hostnameN>:<portnumberN>"
-        "[;"
-        "<bandwidthN>]\n"
-        "                         TCP collector hosts [default=%s]\n"
-        "                           Bandwidth limitation in Kb/s\n"
+        "  -m <path>              Avro schema file path [default=%s]\n"
         "  -n <hostname>:<portnumber>#<ca_cert>#<cert>#<key>\n"
         "                         SSL/TLS collector host [default=%s]\n"
         "                           0 for no SSL/TLS collector\n"
@@ -170,7 +165,7 @@ void usage(char *name) {
         OpenRFSenseContext::getInstance()->getMinTimeRes(),
         OpenRFSenseContext::getInstance()->getWindowing().c_str(),
         OpenRFSenseContext::getInstance()->getComprLevel(),
-        OpenRFSenseContext::getInstance()->getTcpHosts().c_str(),
+        OpenRFSenseContext::getInstance()->getSchemaPath().c_str(),
         OpenRFSenseContext::getInstance()->getTlsHosts().c_str(),
         OpenRFSenseContext::getInstance()->isFifoPriority() ? "true" : "false",
         OpenRFSenseContext::getInstance()->getLog2FftSize(),
@@ -220,11 +215,11 @@ void parse_args(int argc, char *argv[]) {
         case 'l':
             OpenRFSenseContext::getInstance()->setComprLevel(atol(optarg));
             break;
-        case 'm':
-            OpenRFSenseContext::getInstance()->setTcpHosts(strdup(optarg));
-            break;
         case 'o':
             OpenRFSenseContext::getInstance()->setSoverlap(atol(optarg));
+            break;
+        case 'm':
+            OpenRFSenseContext::getInstance()->setSchemaPath(strdup(optarg));
             break;
         case 'n':
             OpenRFSenseContext::getInstance()->setTlsHosts(strdup(optarg));

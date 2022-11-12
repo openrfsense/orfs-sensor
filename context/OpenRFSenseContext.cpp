@@ -42,6 +42,7 @@ void OpenRFSenseContext::print() {
     std::cout << "Min Freq: " << getMinFreq() << std::endl;
     std::cout << "Max Freq: " << getMaxFreq() << std::endl;
     std::cout << "Pipeline: " << getPipeline() << std::endl;
+    std::cout << "Schema: " << getSchemaPath() << std::endl;
     std::cout << "Windowing: " << getWindowing() << std::endl;
     std::cout << "AvgFactor: " << getAvgFactor() << std::endl;
     std::cout << "SamplingRate: " << getSamplingRate() << std::endl;
@@ -96,6 +97,13 @@ std::string OpenRFSenseContext::getPipeline() const { return mPipeline; }
 void OpenRFSenseContext::setPipeline(const std::string &pipeline) {
     mPipeline = pipeline;
 }
+
+const std::string &OpenRFSenseContext::getSchemaPath() const { return mSchemaPath; }
+
+void OpenRFSenseContext::setSchemaPath(const std::string &schemaPath) {
+    mSchemaPath = schemaPath;
+}
+
 unsigned int OpenRFSenseContext::getAvgFactor() const { return mAvgFactor; }
 
 void OpenRFSenseContext::setAvgFactor(unsigned int avgFactor) {

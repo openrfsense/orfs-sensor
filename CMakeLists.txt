@@ -91,7 +91,7 @@ target_link_libraries(
 
 # Installation directories
 install(TARGETS orfs_sensor DESTINATION bin)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/schemas/sample.avsc
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/sample.avsc
         DESTINATION openrfsense/)
 
 # Determine current architecture

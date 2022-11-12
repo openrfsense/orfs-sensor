@@ -54,7 +54,7 @@ void AvroSerialization::IQ() {
     }
 
     avro_schema_t avro_schema = NULL;
-    parseSchema("openrfsense/sample.avsc", avro_schema);
+    parseSchema(OpenRFSenseContext::getInstance()->getSchemaPath().c_str(), avro_schema);
 
     avro_value_iface_t *avro_iface = avro_generic_class_from_schema(avro_schema);
 
@@ -143,7 +143,7 @@ void AvroSerialization::PSD() {
         ((float)OpenRFSenseContext::getInstance()->getSamplingRate()) / fft_size;
 
     avro_schema_t avro_schema = NULL;
-    parseSchema("openrfsense/sample.avsc", avro_schema);
+    parseSchema(OpenRFSenseContext::getInstance()->getSchemaPath().c_str(), avro_schema);
 
     avro_value_iface_t *avro_iface = avro_generic_class_from_schema(avro_schema);
 
@@ -359,9 +359,9 @@ void AvroSerialization::writeMetadata(avro_value_t *base, SpectrumSegment *segme
     // check_i(avro_value_set_branch(&avro_value_lossrate, 0, &avro_value_branch));
     // check_i(avro_value_set_null(&avro_value_branch));
 
-    // check_i(avro_value_get_by_name(&base, "obfuscation", &avro_value_obfuscation, NULL));
-    // check_i(avro_value_set_branch(&avro_value_obfuscation, 0, &avro_value_branch));
-    // check_i(avro_value_set_null(&avro_value_branch));
+    // check_i(avro_value_get_by_name(&base, "obfuscation", &avro_value_obfuscation,
+    // NULL)); check_i(avro_value_set_branch(&avro_value_obfuscation, 0,
+    // &avro_value_branch)); check_i(avro_value_set_null(&avro_value_branch));
 }
 
 int AvroSerialization::get_mac_address_eth0(char *mac) {
