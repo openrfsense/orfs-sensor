@@ -29,7 +29,7 @@ or (an AUR helper is needed):
 $ sudo yay -S avro-c
 ```
 
-### Compiling
+### Building
 
 Clone and build the repo (CMake is needed):
 
@@ -45,12 +45,17 @@ To create a `.deb` package use:
 $ cpack .
 ```
 
+To build and install for the local machine:
+```shell
+$ cmake --install . --config Release --prefix /usr --strip
+```
+
 ### Running
 
 Store PSD measurements to a CSV file. The output contains time, center frequency and PSD information.
 
 ```
-./orfs_sensor <sensor_id> 24000000 1700000000 -z PSD -s 2400000 -u /tmp/psd_data.csv
+./orfs_sensor <sensor_id> <campaign_id> 24000000 1700000000 -z PSD -s 2400000 -u /tmp/psd_data.csv
 ```
 
 ---
@@ -62,7 +67,7 @@ just right before the file name.
 (little endian). IQ is normalized between -1 and 1, therefore it can be fed straight to gqrx or gnuradio as raw file.
 
 ```
-./orfs_sensor <sensor_id> 102000000 102000000 -z IQ -s 2400000 -t 10 -u FLOAT:/tmp/iq_data.raw
+./orfs_sensor <sensor_id> <campaign_id> 102000000 102000000 -z IQ -s 2400000 -t 10 -u FLOAT:/tmp/iq_data.raw
 ```
 
 **BYTE**: The output contains I/Q samples as a sequence of 8-bit unsigned values 
@@ -70,5 +75,12 @@ just right before the file name.
 with the rtl-sdr suite. This option is quite convenient to use on a RPi0.
 
 ```
-./orfs_sensor <sensor_id> 102000000 102000000 -z IQ -s 2400000 -t 10 -u BYTE:/tmp/iq_data.raw
+./orfs_sensor <sensor_id> <campaign_id> 102000000 102000000 -z IQ -s 2400000 -t 10 -u BYTE:/tmp/iq_data.raw
 ```
+
+### Differences from original project
+Several changes were made to the original (pre-fork) source code, most notably:
+- Cleaned up Avro schemas, breaking compatibility
+- Added sensor ID and campaign ID as mandatory command line paramenters
+- General code cleanup (minor) and formatting
+- Fixed CMake not finding dependencies on `arm64` hosts

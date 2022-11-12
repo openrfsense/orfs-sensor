@@ -152,7 +152,6 @@ void Transmission::run() {
 
             // Free memory of the segment
             delete (segment);
-
         } else
             usleep(1);
     }

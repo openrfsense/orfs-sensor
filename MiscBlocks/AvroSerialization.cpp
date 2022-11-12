@@ -54,7 +54,7 @@ void AvroSerialization::IQ() {
     }
 
     avro_schema_t avro_schema = NULL;
-    parseSchema("schemas/iq-spec.avsc", avro_schema);
+    parseSchema("openrfsense/sample.avsc", avro_schema);
 
     avro_value_iface_t *avro_iface = avro_generic_class_from_schema(avro_schema);
 
@@ -78,7 +78,7 @@ void AvroSerialization::IQ() {
             avro_generic_value_new(avro_iface, &avro_value_sample);
 
             // Populate metadata
-            writeMetadata(avro_value_sample, segment);
+            writeMetadata(&avro_value_sample, segment);
 
             avro_value_t avro_value_data;
             avro_value_get_by_name(&avro_value_sample, "data", &avro_value_data, NULL);
@@ -142,9 +142,8 @@ void AvroSerialization::PSD() {
     float freq_res =
         ((float)OpenRFSenseContext::getInstance()->getSamplingRate()) / fft_size;
 
-    const char *json_schema_file = "schemas/rtl-spec.avsc";
     avro_schema_t avro_schema = NULL;
-    parseSchema(json_schema_file, avro_schema);
+    parseSchema("openrfsense/sample.avsc", avro_schema);
 
     avro_value_iface_t *avro_iface = avro_generic_class_from_schema(avro_schema);
 
@@ -161,7 +160,7 @@ void AvroSerialization::PSD() {
             avro_generic_value_new(avro_iface, &avro_value_sample);
 
             // Populate metadata
-            writeMetadata(avro_value_sample, segment);
+            writeMetadata(&avro_value_sample, segment);
 
             avro_value_t avro_value_config, avro_value_center_freq;
             avro_value_get_by_name(
@@ -243,7 +242,7 @@ void AvroSerialization::parseSchema(const char *filename, avro_schema_t &avro_sc
     free(json_schema);
 }
 
-void AvroSerialization::writeMetadata(avro_value_t &base, SpectrumSegment *segment) {
+void AvroSerialization::writeMetadata(avro_value_t *base, SpectrumSegment *segment) {
     // Sensing ID and timestamps (required)
     avro_value_t avro_value_lossrate, avro_value_sen_id, avro_value_campaign_id,
         avro_value_sample_type, avro_value_time, avro_value_timesecs,
@@ -252,30 +251,31 @@ void AvroSerialization::writeMetadata(avro_value_t &base, SpectrumSegment *segme
     // Write sensor ID, fallback to eth0 mac address string
     char *mac_eth0_dec = 0;
     get_mac_address_eth0(mac_eth0_dec);
-    avro_value_get_by_name(&base, "sensorId", &avro_value_sen_id, NULL);
+    avro_value_get_by_name(base, "sensorId", &avro_value_sen_id, NULL);
     avro_value_set_string(&avro_value_sen_id, mac_eth0_dec);
     if (!OpenRFSenseContext::getInstance()->getSensorId().empty())
         avro_value_set_string(
             &avro_value_sen_id, OpenRFSenseContext::getInstance()->getSensorId().c_str());
 
-    avro_value_get_by_name(&base, "campaignId", &avro_value_campaign_id, NULL);
+    avro_value_get_by_name(base, "campaignId", &avro_value_campaign_id, NULL);
     avro_value_set_string(&avro_value_campaign_id, "");
     if (!OpenRFSenseContext::getInstance()->getSensorId().empty())
         avro_value_set_string(
             &avro_value_campaign_id,
             OpenRFSenseContext::getInstance()->getCampaignId().c_str());
 
-    avro_value_get_by_name(&base, "sampleType", &avro_value_sample_type, NULL);
+    avro_value_get_by_name(base, "sampleType", &avro_value_sample_type, NULL);
     avro_value_set_string(
         &avro_value_sample_type,
         OpenRFSenseContext::getInstance()->getPipeline().c_str());
 
-    check_i(avro_value_get_by_name(&avro_value_time, "time", &avro_value_time, NULL));
+    check_i(avro_value_get_by_name(base, "time", &avro_value_time, NULL));
+
     avro_value_get_by_name(&avro_value_time, "seconds", &avro_value_timesecs, NULL);
     avro_value_set_long(&avro_value_timesecs, segment->getTimeStamp().tv_sec);
 
     avro_value_get_by_name(
-        &avro_value_time, "microSeconds", &avro_value_timemicrosecs, NULL);
+        &avro_value_time, "microseconds", &avro_value_timemicrosecs, NULL);
     avro_value_set_int(&avro_value_timemicrosecs, segment->getTimeStamp().tv_nsec);
 
     avro_value_t avro_value_config, avro_value_frontend_gain, avro_value_center_frequency,
@@ -285,7 +285,7 @@ void AvroSerialization::writeMetadata(avro_value_t &base, SpectrumSegment *segme
         avro_value_system_sync, avro_value_extra_conf, avro_value_obfuscation,
         avro_value_branch;
 
-    check_i(avro_value_get_by_name(&base, "config", &avro_value_config, NULL));
+    check_i(avro_value_get_by_name(base, "config", &avro_value_config, NULL));
 
     check_i(avro_value_get_by_name(
         &avro_value_config, "hoppingStrategy", &avro_value_hopping_strategy, NULL));
@@ -354,13 +354,14 @@ void AvroSerialization::writeMetadata(avro_value_t &base, SpectrumSegment *segme
     check_i(avro_value_set_branch(&avro_value_extra_conf, 0, &avro_value_branch));
     check_i(avro_value_set_null(&avro_value_branch));
 
-    check_i(avro_value_get_by_name(&base, "lossRate", &avro_value_lossrate, NULL));
-    check_i(avro_value_set_branch(&avro_value_lossrate, 0, &avro_value_branch));
-    check_i(avro_value_set_null(&avro_value_branch));
+    // FIXME: find meaningful data to use for these fields
+    // check_i(avro_value_get_by_name(&base, "lossRate", &avro_value_lossrate, NULL));
+    // check_i(avro_value_set_branch(&avro_value_lossrate, 0, &avro_value_branch));
+    // check_i(avro_value_set_null(&avro_value_branch));
 
-    check_i(avro_value_get_by_name(&base, "obfuscation", &avro_value_obfuscation, NULL));
-    check_i(avro_value_set_branch(&avro_value_obfuscation, 0, &avro_value_branch));
-    check_i(avro_value_set_null(&avro_value_branch));
+    // check_i(avro_value_get_by_name(&base, "obfuscation", &avro_value_obfuscation, NULL));
+    // check_i(avro_value_set_branch(&avro_value_obfuscation, 0, &avro_value_branch));
+    // check_i(avro_value_set_null(&avro_value_branch));
 }
 
 int AvroSerialization::get_mac_address_eth0(char *mac) {

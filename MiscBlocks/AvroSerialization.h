@@ -70,7 +70,7 @@ class AvroSerialization :
   private:
     void run();
     void parseSchema(const char *filename, avro_schema_t &avro_schema);
-    void writeMetadata(avro_value_t &base, SpectrumSegment *segment);
+    void writeMetadata(avro_value_t *base, SpectrumSegment *segment);
     int get_mac_address_eth0(char *mac);
 
     ReaderWriterQueue<SpectrumSegment *> *mQueueOut;

@@ -80,6 +80,7 @@ void usage(char *name) {
         "\n"
         "Arguments:\n"
         "  sensor_id              Unique sensor ID\n"
+        "  campaign_id            Unique campaign ID\n"
         "  min_freq               Lower frequency bound in Hz\n"
         "  max_freq               Upper frequency bound in Hz\n"
         "\n"
@@ -186,7 +187,6 @@ void parse_args(int argc, char *argv[]) {
 
     // Option arguments
     while ((opt = getopt(argc, argv, options)) != -1) {
-
         switch (opt) {
         case 'a':
             OpenRFSenseContext::getInstance()->setAvgFactor(atol(optarg));
@@ -261,12 +261,14 @@ void parse_args(int argc, char *argv[]) {
             break;
 
         default:
+            fprintf(stderr, "Unknown option '-%c'\n\n", opt);
             usage(argv[0]);
         }
     }
 
     // Non-option arguments
     if (optind + 4 != argc) {
+        fprintf(stderr, "Malformed arguments\n\n");
         usage(argv[0]);
     } else {
         OpenRFSenseContext::getInstance()->setSensorId(argv[optind]);
