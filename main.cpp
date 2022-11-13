@@ -336,8 +336,14 @@ int main(int argc, char *argv[]) {
     auto *rtlDriver = new orfs::rtlsdrDriver();
     vComponents.push_back(rtlDriver);
 
-    rtlDriver->open(OpenRFSenseContext::getInstance()->getDevIndex());
-
+    try {
+        rtlDriver->open(OpenRFSenseContext::getInstance()->getDevIndex());
+    } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        shutdown();
+        exit(-1);
+    }
+    
     orfs::IQStream *iqStream = new orfs::IQStream();
 
     if (OpenRFSenseContext::getInstance()->getPipeline().compare("PSD") == 0) {

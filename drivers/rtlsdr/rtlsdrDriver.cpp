@@ -28,6 +28,7 @@
 namespace orfs {
 
 rtlsdrDriver::rtlsdrDriver() {
+    mDevice = NULL;
     mQueueOut = new ReaderWriterQueue<SpectrumSegment *>(100);
     mQueueOut2 = new ReaderWriterQueue<SpectrumSegment *>(100);
     mConverterEnabled = false;
@@ -40,7 +41,7 @@ int rtlsdrDriver::open(int device_index) {
 
     if (n_rtlsdr == 0) {
         std::cerr << "* Error: no RTL-SDR USB devices found" << std::endl;
-        throw std::logic_error("Fatal Error");
+        throw std::runtime_error("no RTL-SDR USB devices found");
     }
 
     // Choose which device to use
@@ -62,19 +63,16 @@ int rtlsdrDriver::open(int device_index) {
 
     // Open
     if (rtlsdr_open(&mDevice, device_index) < 0) {
-        std::cerr << "ERROR: unable to open RTLSDR device" << std::endl;
-        throw std::logic_error("Fatal Error");
+        throw std::runtime_error("Unable to open RTLSDR device");
     }
 
     if (rtlsdr_set_direct_sampling(
-            mDevice, OpenRFSenseContext::getInstance()->getDirectSamplingMode()) < 0) {
-        std::cerr << "Error: unable to rtlsdr_set_direct_sampling" << std::endl;
-        throw std::logic_error("Fatal Error, rtlsdr_set_direct_sampling");
-    } else {
-        std::cout << "direct sampling mode set properly, "
-                  << OpenRFSenseContext::getInstance()->getDirectSamplingMode()
-                  << std::endl;
-    }
+            mDevice, OpenRFSenseContext::getInstance()->getDirectSamplingMode()) < 0)
+        throw std::runtime_error("Failed to set direct sampling mode");
+   
+    std::cout << "direct sampling mode set properly, "
+                << OpenRFSenseContext::getInstance()->getDirectSamplingMode()
+                << std::endl;
 
     int samplingRate = OpenRFSenseContext::getInstance()->getSamplingRate();
 
@@ -82,14 +80,14 @@ int rtlsdrDriver::open(int device_index) {
     if (rtlsdr_set_sample_rate(mDevice, samplingRate) < 0) {
         std::cerr << "ERROR: unable to set sampling rate to " << samplingRate
                   << std::endl;
-        throw std::logic_error("Fatal Error");
+        throw std::runtime_error("Failed to set sampling rate");
     }
 
     int frequency = 24e6; // default value
 
     if (rtlsdr_set_center_freq(mDevice, frequency) < 0) {
         std::cerr << "ERROR: unable to set frequency to" << frequency << std::endl;
-        throw std::logic_error("Fatal Error");
+        throw std::runtime_error("Failed to set frequency");
     }
 
     int *gains;
@@ -108,18 +106,15 @@ int rtlsdrDriver::open(int device_index) {
     int gain = OpenRFSenseContext::getInstance()->getGain();
 
     int r = rtlsdr_set_tuner_gain_mode(mDevice, 1);
-    if (r < 0) {
-        std::cerr << "ERROR: Failed to enable manual gain mode" << std::endl;
-        throw std::logic_error("Fatal Error");
-    }
+    if (r < 0)
+        throw std::runtime_error("Failed to enable manual gain mode");
+        
     r = rtlsdr_set_tuner_gain(mDevice, gain * 10);
-    if (r < 0) {
-        std::cerr << "ERROR: Failed to set manual tuner gain" << std::endl;
-        throw std::logic_error("Fatal Error");
-    } else {
-        int g = rtlsdr_get_tuner_gain(mDevice);
-        std::cout << "Gain set to " << g / 10 << std::endl;
-    }
+    if (r < 0)
+        throw std::runtime_error("Failed to set manual tuner gain");
+    
+    int g = rtlsdr_get_tuner_gain(mDevice);
+    std::cout << "Gain set to " << g / 10 << std::endl;
 
     // Reset the buffer
     if (rtlsdr_reset_buffer(mDevice) < 0) {

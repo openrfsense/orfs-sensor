@@ -44,7 +44,10 @@ class Component {
     virtual int stop() = 0;
 
     // wait
-    void waitForThread() { mThread.join(); };
+    void waitForThread() { 
+      if (mThread.joinable())
+        mThread.join();
+    };
 
   private:
     // method that executes in the thread
