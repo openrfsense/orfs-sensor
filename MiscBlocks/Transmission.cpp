@@ -113,18 +113,23 @@ void Transmission::run() {
                 // The payload consists of the compressed data plus some
                 // padding, guaranteeing the packet size to be a multiple of 4
                 payload_size = (data_size + 3) & ~0x03;
-                buf = (uint32_t *)realloc(buf, payload_size);
+                // Accounts for the initial 4-byte unsigned integer data
+                // size indicator
+                packet_size = sizeof(uint32_t) + payload_size;
+                buf = (uint32_t *)realloc(buf, packet_size);
                 prev_data_size = data_size;
             }
 
-            memset(buf, 0, payload_size);
-            memcpy(buf, avroBuffer, data_size);
+            memset(buf, 0, packet_size);
+
+            buf[0] = htonl(data_size);
+            memcpy(buf + 1, avroBuffer, data_size);
 
             int r;
             if (mConnection == ConnectionType::TLS)
-                r = tls_write(tls_con, buf, payload_size);
+                r = tls_write(tls_con, buf, packet_size);
             else
-                r = tcp_write(tcp_con, buf, payload_size);
+                r = tcp_write(tcp_con, buf, packet_size);
 
             if (r != 0) {
                 std::cerr << "[ERROR] Transmission thread could not write "
